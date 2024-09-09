@@ -6,6 +6,14 @@ from pydantic import BaseModel, Field
 from app.hotels.schemas import SchemaHotel
 
 
+class RoomsImages(BaseModel):
+    name: str
+    path: str
+
+    class Config:
+        from_attributes = True
+
+
 class RoomsSchema(BaseModel):
     id: int
     hotel_id: int
@@ -15,6 +23,10 @@ class RoomsSchema(BaseModel):
     services: list[str]
     quantity_rooms: int
     hotel: SchemaHotel
+    images: list[RoomsImages]
+
+    class Config:
+        from_attributes = True
 
 
 class OneRoomsSchema(BaseModel):

@@ -246,7 +246,7 @@ cython_debug/
 .pytest_cache
 /media/
 /identifier.sqlite
-/static/
+app/static/
 
 #migrations
 **/migrations/**

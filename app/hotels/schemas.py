@@ -16,6 +16,8 @@ class SchemaHotel(BaseModel):
     rooms_quantity: int
     image_id: int
 
+    class Config:
+        from_attributes = True
 
 # @dataclass
 # class HotelSearchArgs:

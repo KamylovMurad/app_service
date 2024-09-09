@@ -3,6 +3,7 @@ from passlib.context import CryptContext
 from jose import jwt
 from pydantic import EmailStr
 from app.config import settings
+from app.exceptions import IncorrectEmailOrPasswordException
 from app.users.dao import UsersDAO
 from passlib.exc import UnknownHashError
 from fastapi import HTTPException, status
@@ -30,10 +31,6 @@ def create_access_token(data: dict) -> str:
 
 async def authenticate(email: EmailStr, password: str):
     user = await UsersDAO.get_one_or_none(email=email)
-    if not user:
-        return None
-    try:
-        verify_password(password, user.password)
-    except UnknownHashError:
-        return None
+    if not (user and verify_password(password, user.password)):
+        raise IncorrectEmailOrPasswordException
     return user

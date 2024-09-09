@@ -44,3 +44,8 @@ class RoomsConflictException(BookingException):
 class HotelNotFoundException(BookingException):
     detail = "Отель с указанным id не найден"
     status_code = status.HTTP_404_NOT_FOUND
+
+
+class IncorrectEmailOrPasswordException(BookingException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = "Неверная почта или пароль"

@@ -6,10 +6,9 @@ from app.db import Model
 
 # from app.rooms.models import Rooms
 
-# if TYPE_CHECKING:
-#     # Убирает предупреждения отсутствия импорта и неприятные подчеркивания в
-#     # PyCharm и VSCode
-#     from app.rooms.models import Rooms
+if TYPE_CHECKING:
+    from rooms.models import Rooms
+
 
 class Hotels(Model):
     __tablename__ = 'hotels'
@@ -20,6 +19,9 @@ class Hotels(Model):
     rooms_quantity: Mapped[int]
     image_id: Mapped[int]
     rooms: Mapped[list["Rooms"]] = relationship(back_populates="hotel")
+
+    def __str__(self):
+        return f'Отель: {self.name}'
 
 # Модель написана в соответствии со старым стилем Алхимии (версии 1.x)
 # class Hotels(Base):

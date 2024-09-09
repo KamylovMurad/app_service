@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import select, func, or_
+from sqlalchemy import select, func, or_, update
 
 from app.bookings.models import Bookings
 from app.dao_base.base import BaseDAO
@@ -79,3 +79,10 @@ class HotelsDAO(BaseDAO):
 # 4: 53
 # 5: 22
 # 6: 45
+
+    @classmethod
+    async def update_image_id(cls, hotel: Hotels, image_id: int):
+        async with async_session_maker() as session:
+            query = update(Hotels).filter_by(id=hotel.id).values(image_id=image_id)
+            await session.execute(query)
+            await session.commit()
