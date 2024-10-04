@@ -35,6 +35,5 @@ class RoomsDAO(BaseDAO):
         async with async_session_maker() as session:
             query = select(cls.model).options(selectinload(cls.model.images)).options(joinedload(cls.model.hotel)).filter_by(**filter_by)
             result = await session.execute(query)
-            # return await session.scalars(query)
-            return result.scalars().unique().all()
+            return result.scalars().all()
             # return result.mappings().unique().all()

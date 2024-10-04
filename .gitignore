@@ -255,3 +255,4 @@ app/static/
 celerybeat-schedule.db
 123.py
 *.sql
+celerybeat*

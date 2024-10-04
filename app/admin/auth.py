@@ -7,7 +7,7 @@ from app.users.dependencies import get_user
 
 
 class AdminAuth(AuthenticationBackend):
-    async def login(self, request: Request):
+    async def login(self, request: Request) -> Optional[bool]:
         form = await request.form()
         email, password = form["username"], form["password"]
 

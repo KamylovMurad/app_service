@@ -1,12 +1,14 @@
-from datetime import date, datetime, timedelta
-from sqlalchemy import select, func, insert, and_, or_, delete
+from datetime import date, timedelta
+from typing import List
+
+from sqlalchemy import select, func, insert, delete
 from sqlalchemy.orm import selectinload
+
 from app.bookings.models import Bookings
 from app.bookings.schemas import SchemaEmailBooking
 from app.dao_base.base import BaseDAO
 from app.db import async_session_maker, async_session_maker_nullpool
 from app.rooms.models import Rooms
-from app.users.schemas import SchemaEmailUser
 
 
 class BookingsDAO(BaseDAO):
@@ -14,11 +16,11 @@ class BookingsDAO(BaseDAO):
 
     @classmethod
     async def add(
-            cls,
-            user_id: int,
-            room_id: int,
-            date_from: date,
-            date_to: date
+        cls,
+        user_id: int,
+        room_id: int,
+        date_from: date,
+        date_to: date
     ):
         async with async_session_maker() as session:
             booked_rooms = select(Bookings).filter(
@@ -41,8 +43,8 @@ class BookingsDAO(BaseDAO):
                 Rooms.quantity_rooms - func.count(booked_rooms.c.room_id).label("left_rooms")
             ).select_from(Rooms).filter_by(id=room_id).join(
                 booked_rooms, booked_rooms.c.room_id == Rooms.id, isouter=True
-            ).group_by(Rooms.id)
-            # ).group_by(Rooms.quantity_rooms, booked_rooms.c.room_id)
+            ).group_by(Rooms.quantity_rooms, booked_rooms.c.room_id)
+            # ).group_by(Rooms.id)
 
             result = await session.execute(left_rooms)
             rooms_left = result.scalar()
@@ -97,10 +99,10 @@ class BookingsDAO(BaseDAO):
 
     @classmethod
     async def test_func(
-            cls,
-            room_id: int,
-            date_from: date,
-            date_to: date
+        cls,
+        room_id: int,
+        date_from: date,
+        date_to: date
     ):
         booked_rooms = select(Bookings).filter(
             Bookings.room_id == room_id,
@@ -111,10 +113,11 @@ class BookingsDAO(BaseDAO):
             return result.scalars().all()
 
     @classmethod
-    async def get_bookings_reservation_for_remind(cls, date_now: date, days: int = 1):
+    async def get_bookings_reservation_for_remind(cls, date_now: date, days: int = 1) -> List[SchemaEmailBooking]:
         next_day = date_now + timedelta(days=days)
         async with async_session_maker_nullpool() as session:
             bookings_user_mails = await session.scalars(select(cls.model).options(
-                    selectinload(cls.model.user),
-                ).filter(cls.model.date_from == next_day))
-            return [SchemaEmailBooking.model_validate(booking, from_attributes=True) for booking in bookings_user_mails.all()]
+                selectinload(cls.model.user),
+            ).filter(cls.model.date_from == next_day))
+            return [SchemaEmailBooking.model_validate(booking, from_attributes=True) for booking in
+                    bookings_user_mails.all()]

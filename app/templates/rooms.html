@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Набронировал</title>
+</head>
+<body>
+    <div class="main">
+        {% for room in rooms %}
+        <div style="display:flex; margin-bottom: 15px; margin-left: 200px;">
+            <div>
+                <h1>{{room.name}}</h1>
+                <h4>{{room.price}}</h4>
+                {% for pic in room.images %}
+                    <img src="{{ url_for('static', path=pic.path) }}" alt="Фото номера" width="200">
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

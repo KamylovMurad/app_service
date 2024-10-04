@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi_cache.decorator import cache
 
-from app.exceptions import HotelNotFoundException
+from app.exceptions import HotelNotFoundException, IncorrectDateException
 from app.hotels.dao import HotelsDAO
 from app.hotels.schemas import HotelSearchArgs
 
@@ -21,6 +21,8 @@ async def get_all():
 @router.get("/{hotel_id}/rooms")
 @cache(expire=30)
 async def get_rooms_by_hotel(hotel_id: int, date_from: date, date_to: date):
+    if date_from > date_to:
+        raise IncorrectDateException
     return await HotelsDAO.get_rooms_by_hotel(hotel_id, date_from, date_to)
 
 

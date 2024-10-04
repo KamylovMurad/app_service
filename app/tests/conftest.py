@@ -3,7 +3,8 @@ from datetime import datetime
 import asyncio
 import json
 import pytest
-
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
 from app.bookings.models import Bookings
 from app.config import settings
 from app.db import Model, async_session_maker, engine
@@ -56,7 +57,24 @@ def event_loop(request):
     loop.close()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 async def ac():
-    async with AsyncClient(app=fastapi_app, base_url="http://test") as client:
-        yield client
+    async with AsyncClient(app=fastapi_app, base_url="http://test") as async_client:
+        yield async_client
+
+
+@pytest.fixture(scope="session")
+async def authenticated_ac():
+    async with AsyncClient(app=fastapi_app, base_url="http://test") as async_client:
+        await async_client.post("/auth/login", json={
+            "email": "test@example.com",
+            "password": "test",
+        })
+        assert async_client.cookies['booking_access_token']
+        yield async_client
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def init_cache():
+    FastAPICache.init(InMemoryBackend)
+    yield

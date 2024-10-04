@@ -5,6 +5,13 @@ description = ""
 authors = ["Murad <kamylov@bk.ru>"]
 readme = "README.md"
 
+[tool.autoflake]
+check_diff = true
+imports = ["sqlalchemy", "app"]
+
+[tool.pyright]
+include = ["app"]
+
 [tool.poetry.dependencies]
 python = "^3.10"
 aiohttp = "3.9.1"
@@ -65,6 +72,10 @@ pillow = "^10.3.0"
 crontab = "^1.0.1"
 sqladmin = "^0.17.0"
 pytest = "^8.2.2"
+flake8 = "^7.1.1"
+isort = "^5.13.2"
+autoflake = "^2.3.1"
+pyright = "^1.1.383"
 
 
 [build-system]
