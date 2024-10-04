@@ -33,7 +33,7 @@ class OneRoomsSchema(BaseModel):
     id: int
     hotel_id: int
     name: str
-    description: str
+    description: Optional[str]
     price: Decimal
     services: list[str]
     quantity_rooms: int
