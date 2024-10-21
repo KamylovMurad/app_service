@@ -1,11 +1,12 @@
+import time
 from contextlib import asynccontextmanager
-import datetime
-from fastapi import FastAPI
+from typing import Callable
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from loguru import logger
 from redis import asyncio as aioredis
 from sqladmin import Admin
 
@@ -23,9 +24,23 @@ from app.config import settings
 from app.db import engine
 from app.hotels.router import router as router_hotels
 from app.images.router import router as router_images
+from app.logger import logger
 from app.pages.router import router as router_pages
 from app.rooms.router import router as router_rooms
 from app.users.router import router as router_users
+import sentry_sdk
+
+
+sentry_sdk.init(
+    dsn=settings.SENTRY_DSN,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
 
 
 @asynccontextmanager
@@ -82,3 +97,15 @@ admin.add_view(BookingsAdmin)
 admin.add_view(HotelsAdmin)
 admin.add_view(RoomsAdmin)
 admin.add_view(ImageRoomsAdmin)
+
+
+@app.middleware("http")
+async def add_process_time(request: Request, call_next: Callable):
+    start = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start
+    response.headers["X-Process-Time"] = str(process_time)
+    logger.info("Request handling data", extra={
+        "process_time": round(process_time, 4)
+    })
+    return response

@@ -13,6 +13,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     MODE: Literal["DEV", "TEST", "PROD"]
+    LOG_LEVEL: str
+    SENTRY_DSN: str
 
     DB_USER: str
     DB_PASS: str
