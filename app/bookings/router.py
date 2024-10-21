@@ -48,7 +48,7 @@ async def get_bookings(user: Users = Depends(get_user)):
     return await BookingsDAO.get_bookings(user_id=user.id)
 
 
-@router.get('test')
+@router.get('/test')
 def test_bookings(
         room_id: int,
         date_from: date,

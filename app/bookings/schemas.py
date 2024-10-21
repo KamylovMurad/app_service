@@ -19,6 +19,7 @@ class SchemaEmailBooking(BaseModel):
     date_to: date
     user: SchemaEmailUser
 
+
 class SchemaBookingSuccess(BaseModel):
     room_id: int
     date_from: date

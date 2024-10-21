@@ -43,8 +43,8 @@ class BookingsDAO(BaseDAO):
                 Rooms.quantity_rooms - func.count(booked_rooms.c.room_id).label("left_rooms")
             ).select_from(Rooms).filter_by(id=room_id).join(
                 booked_rooms, booked_rooms.c.room_id == Rooms.id, isouter=True
-            ).group_by(Rooms.quantity_rooms, booked_rooms.c.room_id)
-            # ).group_by(Rooms.id)
+            # ).group_by(Rooms.quantity_rooms, booked_rooms.c.room_id)
+            ).group_by(Rooms.id)
 
             result = await session.execute(left_rooms)
             rooms_left = result.scalar()

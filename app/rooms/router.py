@@ -16,7 +16,7 @@ async def get_rooms(query: RoomsQueryParams = Depends()) -> list[RoomsSchema]:
 
 @router.get("/room")
 async def get_room() -> OneRoomsSchema:
-    result = await RoomsDAO.get_by_id(model_id=11)
+    result = await RoomsDAO.get_by_id(model_id=8)
     return result
 
 

@@ -248,11 +248,6 @@ cython_debug/
 /identifier.sqlite
 app/static/
 
-#migrations
-**/migrations/**
-!**/migrations/__init__.py!/celerybeat-schedule.db
-
 celerybeat-schedule.db
-123.py
 *.sql
 celerybeat*
